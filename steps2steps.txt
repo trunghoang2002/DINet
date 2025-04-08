@@ -1,0 +1,29 @@
+# convert input video to 25fps
+ffmpeg -i input.mp4 -filter:v "fps=25" -c:v libx264 -preset slow -crf 18 -c:a copy output.mp4
+Record	Recording settings	OpenFace setting	View	Face Detector	Landmark Detector
+2D landmark & tracked videos	Mask aligned image	Use dynamic AU models	Show video	Openface (MTCNN)	CE-CLM
+
+# styletts
+conda activate stylettsja
+cd StyleTTS_JP
+
+# deepspeech
+pip install tensorflow==2.15.0 python_speech_features==0.6 resampy==0.4.3 scipy==1.15.2 numpy==1.26.4
+pip install fastapi uvicorn[standard]
+conda activate dinet1
+cd DINet
+python main_deepspeech.py
+
+# main requirements
+pip install TTS[ja] fastapi uvicorn[standard] aiortc opencv-python
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+conda install ffmpeg
+conda activate dinet
+cd DINet
+python main.py
+
+# ngrok
+ngrok http --url=cicada-eager-hound.ngrok-free.app 19000
+
+# nvidia-smi
+watch nvidia-smi

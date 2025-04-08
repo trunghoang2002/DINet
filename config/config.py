@@ -92,7 +92,8 @@ class DINetInferenceOptions():
                                  type=str,
                                  help='path of detected openface landmark')
         self.parser.add_argument('--driving_audio_path',
-                                 default='./asserts/examples/driving_audio_1.wav',
+                                 default='./asserts/examples/driving_audio_6.wav',
+                                # default='output_audio.wav',
                                  type=str,
                                  help='path of driving audio')
         self.parser.add_argument('--pretrained_clip_DINet_path',

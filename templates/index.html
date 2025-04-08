@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avatar chatbot</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <h1>Avatar chatbot</h1>
+    <div class="option">
+        <input id="use-stun" type="checkbox" checked/>
+        <label for="use-stun">Use STUN server</label>
+    </div>
+    <div class="controls">
+        <!-- <button id="start-camera">Start Camera</button>
+        <button id="start-file">Start Local File</button>
+        <button id="stop-stream">Stop Stream</button> -->
+        <button id="start-recording">Start Recording</button>
+        <button id="stop-recording">Stop Recording</button>
+    </div>
+    <div id="media">
+        <h2>Media</h2>
+    
+        <audio id="audio" autoplay="true"></audio>
+        <video id="video" autoplay="true" playsinline="true"></video>
+    </div>
+    <div class="generate-container">
+        <textarea id="text-input" placeholder="Enter text here"></textarea>
+        <div class="button-container">
+            <button id="generate">Generate Avatar</button>
+            <span id="timer">⏳ 0s</span>
+        </div>
+    </div>
+    <script src="/static/script.js"></script> <!-- Liên kết file JavaScript -->
+</body>
+</html>

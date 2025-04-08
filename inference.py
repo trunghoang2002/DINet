@@ -26,9 +26,7 @@ def extract_frames_from_video(video_path,save_dir):
         cv2.imwrite(result_path, frame)
     return (int(frame_width),int(frame_height))
 
-if __name__ == '__main__':
-    # load config
-    opt = DINetInferenceOptions().parse_args()
+def facial_dubbing(opt=DINetInferenceOptions().parse_args()):
     if not os.path.exists(opt.source_video_path):
         raise ('wrong video path : {}'.format(opt.source_video_path))
     ############################################## extract frames from source video ##############################################
@@ -51,7 +49,10 @@ if __name__ == '__main__':
     print('loading facial landmarks from : {}'.format(opt.source_openface_landmark_path))
     if not os.path.exists(opt.source_openface_landmark_path):
         raise ('wrong facial landmark path :{}'.format(opt.source_openface_landmark_path))
-    video_landmark_data = load_landmark_openface(opt.source_openface_landmark_path).astype(np.int)
+    
+    # video_landmark_data = load_landmark_openface(opt.source_openface_landmark_path).astype(np.int)
+    video_landmark_data = load_landmark_openface(opt.source_openface_landmark_path).astype(int)
+    
     ############################################## align frame with driving audio ##############################################
     print('aligning frames with driving audio')
     video_frame_path_list = glob.glob(os.path.join(video_frame_dir, '*.jpg'))
@@ -122,6 +123,7 @@ if __name__ == '__main__':
         os.remove(res_face_path)
     videowriter = cv2.VideoWriter(res_video_path, cv2.VideoWriter_fourcc(*'XVID'), 25, video_size)
     videowriter_face = cv2.VideoWriter(res_face_path, cv2.VideoWriter_fourcc(*'XVID'), 25, (resize_w, resize_h))
+    print('synthesizing frames...')
     for clip_end_index in range(5, pad_length, 1):
         print('synthesizing {}/{} frame'.format(clip_end_index - 5, pad_length - 5))
         crop_flag, crop_radius = compute_crop_radius(video_size,res_video_landmark_data_pad[clip_end_index - 5:clip_end_index, :, :],random_scale = 1.05)
@@ -148,14 +150,15 @@ if __name__ == '__main__':
         videowriter_face.write(pre_frame[:, :, ::-1].copy().astype(np.uint8))
         pre_frame_resize = cv2.resize(pre_frame, (crop_frame_w,crop_frame_h))
         frame_data[
-        frame_landmark[29, 1] - crop_radius:
-        frame_landmark[29, 1] + crop_radius * 2,
-        frame_landmark[33, 0] - crop_radius - crop_radius_1_4:
-        frame_landmark[33, 0] + crop_radius + crop_radius_1_4,
+            frame_landmark[29, 1] - crop_radius:
+            frame_landmark[29, 1] + crop_radius * 2,
+            frame_landmark[33, 0] - crop_radius - crop_radius_1_4:
+            frame_landmark[33, 0] + crop_radius + crop_radius_1_4,
         :] = pre_frame_resize[:crop_radius * 3,:,:]
         videowriter.write(frame_data[:, :, ::-1])
     videowriter.release()
     videowriter_face.release()
+    print('adding audio to video...')
     video_add_audio_path = res_video_path.replace('.mp4', '_add_audio.mp4')
     if os.path.exists(video_add_audio_path):
         os.remove(video_add_audio_path)
@@ -164,10 +167,9 @@ if __name__ == '__main__':
         opt.driving_audio_path,
         video_add_audio_path)
     subprocess.call(cmd, shell=True)
+    print('done!')
+    return video_add_audio_path
 
-
-
-
-
-
-
+if __name__ == '__main__':
+    output_video_path = facial_dubbing()
+    print(output_video_path)
